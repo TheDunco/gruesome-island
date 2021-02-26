@@ -1,5 +1,3 @@
-import { randomInt } from "crypto";
-import { type } from "os";
 import { Player } from "../player/player";
 import { Chunk } from "./chunk";
 
@@ -15,9 +13,37 @@ export class World {
         for(var i: number = 0; i < wsize; i++) {
             this.chunks[i] = [];
             for(var j: number = 0; j < wsize; j++) {
-                this.chunks[i][j] = new Chunk("Forest");
+                let biome: BiomeName;
+                let biomeNum = this.randomInteger(0, 100);
+                // 30% forest
+                if (biomeNum <= 30) {
+                    biome = "Forest";
+                // 20% grassland
+                } else if (biomeNum > 30 && biomeNum <= 50) {
+                    biome = "Grassland";
+                // 20% mountains
+                } else if (biomeNum > 50 && biomeNum <= 70) {
+                    biome = "Mountains";
+                // 20% lake
+                } else if (biomeNum > 70 && biomeNum <= 90) {
+                    biome = "Lake"
+                }
+                // 10% desert
+                else if (biomeNum > 90 && biomeNum <= 100) {
+                    biome = "Desert";
+                }
+                this.chunks[i][j] = new Chunk(biome);
             }
         }
+    }
+    
+    lookAround(): string {
+        let retstring = "";
+        let posI = this.players[0].posI;
+        let posJ = this.players[0].posJ;
+        // construct and tell player what biomes etc. they see around them. 
+        // handle this in the app.component as well.
+        return retstring;
     }
     
     showWorld(): string {
@@ -40,6 +66,10 @@ export class World {
         }
         return retstring;
     }
+    
+    randomInteger(min: number, max: number) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
 }
 
 export type BiomeName = "Forest" | "Lake" | "Mountains" | "Desert" | "Grassland";
