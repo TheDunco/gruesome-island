@@ -102,10 +102,21 @@ export class AppComponent {
         this.moveRight();
         break;
         
+      case "l":
+      case "look":
+      case "look around":
+        this.lookAround();
+        break;
+        
       default:
         this.post(`"${this.command}" not recognized as a command`);
         break;
     }
+  }
+  
+  private lookAround() {
+    let surroundings = this.world.lookAround(this.player).split("\n");
+    surroundings.forEach((str) => this.post(str));
   }
   
   private moveRight() {
@@ -196,7 +207,6 @@ export class AppComponent {
   }
   
   scrollToBottom() {
-    console.log("Scrolling to bottom");
     window.scrollTo(0, document.body.scrollHeight);
   }
 }

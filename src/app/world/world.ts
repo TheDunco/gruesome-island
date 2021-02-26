@@ -39,23 +39,65 @@ export class World {
     
     lookAround(player: Player): string {
         let retstring = "";
-        let posI = this.players[this.specificPlayer(player)].posI;
-        let posJ = this.players[this.specificPlayer(player)].posJ;
-        // construct and tell player what biomes etc. they see around them. 
-        // handle this in the app.component as well.
+        let playerIndex: number = this.specificPlayer(player);
+        if (playerIndex == -1) {
+            console.log("Player not found");
+        } else {
+            let posI = this.players[playerIndex].posI;
+            let posJ = this.players[playerIndex].posJ;
+            
+            retstring += "\t";
+            // North/Up
+            if (posI - 1 >= 0) {
+                retstring += this.chunks[posI - 1][posJ].biome;
+            } else {
+                retstring += "World border";
+            }
+            retstring += "\n";
+            
+            // East/Left
+            if (posJ - 1 >= 0) {
+                retstring += this.chunks[posI][posJ - 1].biome;
+            } else {
+                retstring += "World border";
+            }
+            
+            retstring += " ";
+            retstring += this.chunks[posI][posJ].biome;
+            retstring += " ";
+            
+            // West/Right
+            if (posJ + 1 < this.size) {
+                retstring += this.chunks[posI][posJ + 1].biome;
+            } else {
+                retstring += "World border";
+            }
+            retstring += "\n";
+            retstring += "\t";
+
+            // South/Down
+            if (posI + 1 < this.size) {
+                retstring += this.chunks[posI + 1][posJ].biome;
+            } else {
+                retstring += "World border";
+            }
+            retstring += "\n";
+        }
         return retstring;
     }
     
     // get a specific player's index from the list
     specificPlayer(play: Player): number {
         let index = 0;
-        this.players.forEach((player) => {
-            if (player.name == play.name && player.alive == play.alive) { // continue...
+        for(let play of this.players) {
+            if (this.players[index].name == play.name && this.players[index].alive == play.alive) { // continue...
+                console.log(this.players[index].name == play.name, this.players[index].alive == play.alive)
                 return index;
             } else {
                 index++;
+                console.log("WTF");
             }
-        });
+        }
         return -1;
     }
     

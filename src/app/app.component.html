@@ -11,9 +11,9 @@
     </mat-form-field>
     
     <div *ngIf="mainBoxShown">
-      <p *ngFor="let msg of messages">
+      <pre *ngFor="let msg of messages">
         <label class="messages">{{msg}}</label>
-      </p>
+      </pre>
       <mat-form-field>
         <mat-label class="command">Command</mat-label>
         <input matInput autocomplete="off" [(ngModel)]="command" appearance="filled" (keyup.enter)="runCommand()">
