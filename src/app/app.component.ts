@@ -35,8 +35,8 @@ export class AppComponent {
   
   COMMANDS: Command[] = [
     {name: "h/help/?", description: "Display a list of available commands and game rules."},
-    {name: "b", description: "Run multiple commands seperated by spaces (batch/block mode)."},
-    {name: "spawn", description: "Spawn into a new world."},
+    {name: "$", description: "Run multiple commands seperated by spaces (batch/block mode)."},
+    {name: "s/spawn", description: "Spawn into a new world."},
     {name: "up/move up/north/move north", description: "Move your player up."},
     {name: "down/move down/south/move south", description: "Move your player down."},
     {name: "left/move left/west/move west", description: "Move your player left."},
@@ -56,7 +56,7 @@ export class AppComponent {
     this.debug && args.forEach((arg) => this.post(arg));
     
     // batch/block mode
-    if (this.command[0] == "b") {
+    if (this.command[0] == "$") {
       args.forEach((arg) => {
         this.command = arg;
         if (arg != "") {
@@ -130,7 +130,7 @@ export class AppComponent {
         this.post(`"${this.command}" not recognized as a command`);
         break;
       
-      }
+    }
     this.command = "";
   }
   
