@@ -37,13 +37,26 @@ export class World {
         }
     }
     
-    lookAround(): string {
+    lookAround(player: Player): string {
         let retstring = "";
-        let posI = this.players[0].posI;
-        let posJ = this.players[0].posJ;
+        let posI = this.players[this.specificPlayer(player)].posI;
+        let posJ = this.players[this.specificPlayer(player)].posJ;
         // construct and tell player what biomes etc. they see around them. 
         // handle this in the app.component as well.
         return retstring;
+    }
+    
+    // get a specific player's index from the list
+    specificPlayer(play: Player): number {
+        let index = 0;
+        this.players.forEach((player) => {
+            if (player.name == play.name && player.alive == play.alive) { // continue...
+                return index;
+            } else {
+                index++;
+            }
+        });
+        return -1;
     }
     
     showWorld(): string {
