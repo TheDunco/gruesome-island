@@ -1,5 +1,7 @@
 import { Player } from "../player/player";
 import { Chunk } from "./chunk";
+import { v4 as uuidv4 } from 'uuid';
+import { Item } from "../item/item";
 
 export class World {
     players: Player[];
@@ -33,6 +35,10 @@ export class World {
                     biome = "City";
                 }
                 this.chunks[i][j] = new Chunk(biome);
+                
+                if (biomeNum < 10) {
+                    this.chunks[i][j].addItem(new Item(uuidv4(), "Testitem", "Dummy", 1, 1));
+                }
             }
         }
     }
@@ -48,6 +54,39 @@ export class World {
         this.players.push(player);
         // add a new player to the chunk they're supposed to be in
         this.chunks[player.posI][player.posJ].addPlayer(player);
+    }
+    
+    getChunkItem(name: string, player: Player): Item {
+        let playerIndex: number = this.specificPlayer(player);
+        let posI = this.players[playerIndex].posI;
+        let posJ = this.players[playerIndex].posJ;
+        
+        let allChunkItems = this.chunks[posI][posJ].getItems();
+        for (let index = 0; index < allChunkItems.length; index++) {
+            if (allChunkItems[index].name == name) {
+                return allChunkItems[index];
+            } else {
+                index++;
+            }
+        }
+        
+    }
+    
+    inspectChunk(player: Player): string {
+        let playerIndex: number = this.specificPlayer(player);
+        let retstring: string = "Items: ";
+        if (playerIndex == -1) {
+            return "";
+        } else {
+            let posI = this.players[playerIndex].posI;
+            let posJ = this.players[playerIndex].posJ;
+            let items = this.chunks[posI][posJ].getItems();
+            
+            items.forEach((item) => {
+                retstring += item.name + " ";
+            })
+        }
+        return retstring;
     }
     
     lookAround(player: Player): string {

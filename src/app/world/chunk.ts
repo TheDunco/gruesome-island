@@ -1,13 +1,33 @@
 import { Player } from "../player/player";
 import { BiomeName } from "src/app/world/world"
+import { Item } from "../item/item";
 
 export class Chunk {
     
     private occupyingPlayers: Player[];
+    private items: Item[] = [];
     biome: BiomeName;
     
     constructor(nbiome: BiomeName) {
         this.biome = nbiome
+    }
+    
+    addItem(it: Item) {
+        this.items.push(it);
+    }
+    
+    removeItem(it: Item) {
+        let index = 0;
+        this.items.forEach((item) => {
+            if (item.id == it.id) {
+                this.items.splice(index, 1);
+            }
+            return;
+        });
+    }
+    
+    getItems(): Item[] {
+        return this.items;
     }
     
     addPlayer(aplayer: Player) {

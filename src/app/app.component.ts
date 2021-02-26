@@ -5,6 +5,24 @@ import { BrowserStack } from 'protractor/built/driverProviders';
 import { Player } from 'src/app/player/player';
 import { World } from 'src/app/world/world';
 
+/*
+Gamemode ideas:
+1. Blitz
+  - timed
+  - typing speed/player speed based
+  - each turn has a time limit and it alternates
+  
+2. Turn based (default)
+  - no time limit per turn
+  - Each player gets 3-5 (can be more with items) moves per turn (different commands count as differnt "moves")
+
+3. Turn based (batch)
+  - no time limit per turn
+  - Each player can only run 1 command per turn
+  - One batch command ($) only counts as 1 command
+*/
+
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -37,11 +55,11 @@ export class AppComponent {
     {name: "h/help/?", description: "Display a list of available commands and game rules."},
     {name: "$", description: "Run multiple commands seperated by spaces (batch/block mode)."},
     {name: "s/spawn", description: "Spawn into a new world."},
-    {name: "up/move up/north/move north", description: "Move your player up."},
-    {name: "down/move down/south/move south", description: "Move your player down."},
-    {name: "left/move left/west/move west", description: "Move your player left."},
-    {name: "right/move right/east/move east", description: "Move your player right."},
-    {name: "l/look/look around", description: "Get a look at the surrounding chunks"},
+    {name: "up/north", description: "Move your player up."},
+    {name: "down/south", description: "Move your player down."},
+    {name: "left/west", description: "Move your player left."},
+    {name: "right/east", description: "Move your player right."},
+    {name: "l/look", description: "Get a look at the surrounding chunks"},
   ]
   
   usernameEntered() {
@@ -51,21 +69,19 @@ export class AppComponent {
     this.mainBoxShown = true;
   }
   
-  runCommand() {
+  runCommand(command: string = this.command) {
     let args: string[] = this.command.split(" ").slice(1,);
     this.debug && args.forEach((arg) => this.post(arg));
     
     // batch/block mode
-    if (this.command[0] == "$") {
+    if (command[0] == "$") {
       args.forEach((arg) => {
-        this.command = arg;
-        if (arg != "") {
-          this.runCommand();
-        }
-        return;
+        console.log(arg);
+        this.runCommand(arg);
       });
     }
-    switch (this.command.toLowerCase()) {  
+    
+    switch (command.split(' ')[0]) {  
       case "":
         break;
         
@@ -90,48 +106,49 @@ export class AppComponent {
       
       // move up
       case "up":
-      case "move up":
       case "north":
-      case "move north":
         this.moveUp();
         break;
         
       // move down
       case "down":
-      case "move down":
       case "south":
-      case "move south":
         this.moveDown();
         break;
       
       // move left
       case "left":
-      case "move left":
       case "west":
-      case "move west":
         this.moveLeft();
         break;
       
       // move right
       case "right":
-      case "move right":
       case "east":
-      case "move east":
         this.moveRight();
         break;
         
       case "l":
       case "look":
-      case "look around":
         this.lookAround();
         break;
         
-      default:
-        this.post(`"${this.command}" not recognized as a command`);
+      case "i":
+      case "inspect":
+        this.post(this.world.inspectChunk(this.player));
+        break;
+        
+      case "p":
+      case "pickup":
+        this.post(this.player.addItem(this.world.getChunkItem(args[0], this.player)));
         break;
       
+      default:
+        if (command[0] != "$") {
+          this.post(`"${command}" not recognized as a command`);
+        }
+        break;
     }
-    this.command = "";
   }
   
   private lookAround() {
@@ -216,6 +233,7 @@ export class AppComponent {
 
   public post(msg: string) {
     this.messages.push(msg);
+    this.command = "";
     this.scrollToBottom(); // not working
   }
   
