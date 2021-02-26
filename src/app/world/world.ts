@@ -30,11 +30,24 @@ export class World {
                 }
                 // 10% desert
                 else if (biomeNum > 90 && biomeNum <= 100) {
-                    biome = "Desert";
+                    biome = "City";
                 }
                 this.chunks[i][j] = new Chunk(biome);
             }
         }
+    }
+    
+    refreshPlayer(player: Player) {
+        // get the index of the player
+        let index = this.specificPlayer(player);
+        // remove the old player from their current chunk
+        this.chunks[this.players[index].posI][this.players[index].posJ].removePlayer(this.players[index]);
+        // remove the old player from the world
+        this.players.splice(index, 1);
+        // add the new player to the world
+        this.players.push(player);
+        // add a new player to the chunk they're supposed to be in
+        this.chunks[player.posI][player.posJ].addPlayer(player);
     }
     
     lookAround(player: Player): string {
@@ -90,12 +103,11 @@ export class World {
     specificPlayer(play: Player): number {
         let index = 0;
         for(let play of this.players) {
-            if (this.players[index].name == play.name && this.players[index].alive == play.alive) { // continue...
+            if (this.players[index].name == play.name) {
                 console.log(this.players[index].name == play.name, this.players[index].alive == play.alive)
                 return index;
             } else {
                 index++;
-                console.log("WTF");
             }
         }
         return -1;
@@ -127,4 +139,4 @@ export class World {
       }
 }
 
-export type BiomeName = "Forest" | "Lake" | "Mountains" | "Desert" | "Grassland";
+export type BiomeName = "Forest" | "Lake" | "Mountains" | "City" | "Grassland";

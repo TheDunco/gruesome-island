@@ -35,9 +35,13 @@ export class AppComponent {
   
   COMMANDS: Command[] = [
     {name: "h/help/?", description: "Display a list of available commands and game rules."},
+    {name: "b", description: "Run multiple commands seperated by spaces (batch/block mode)."},
     {name: "spawn", description: "Spawn into a new world."},
     {name: "up/move up/north/move north", description: "Move your player up."},
-    {name: "down/move down/south/move south", description: "Move your player down."}
+    {name: "down/move down/south/move south", description: "Move your player down."},
+    {name: "left/move left/west/move west", description: "Move your player left."},
+    {name: "right/move right/east/move east", description: "Move your player right."},
+    {name: "l/look/look around", description: "Get a look at the surrounding chunks"},
   ]
   
   usernameEntered() {
@@ -51,8 +55,20 @@ export class AppComponent {
     let args: string[] = this.command.split(" ").slice(1,);
     this.debug && args.forEach((arg) => this.post(arg));
     
-    switch (this.command.toLowerCase()) {
-      
+    // batch/block mode
+    if (this.command[0] == "b") {
+      args.forEach((arg) => {
+        this.command = arg;
+        if (arg != "") {
+          this.runCommand();
+        }
+        return;
+      });
+    }
+    switch (this.command.toLowerCase()) {  
+      case "":
+        break;
+        
       // help
       case "h":
       case "help":
@@ -61,7 +77,9 @@ export class AppComponent {
         break;
       
       // spawn
+      case "s":
       case "spawn":
+      case "start": // probably will change later
         this.spawn();
         break;
         
@@ -111,7 +129,9 @@ export class AppComponent {
       default:
         this.post(`"${this.command}" not recognized as a command`);
         break;
-    }
+      
+      }
+    this.command = "";
   }
   
   private lookAround() {
@@ -160,9 +180,7 @@ export class AppComponent {
   }
   
   private refreshPlayerInWorld() {
-    this.world.players.pop();
-    this.world.players.push(this.player);
-    // this.showWorld();
+    this.world.refreshPlayer(this.player);
   }
   
   private showWorld() {
@@ -198,8 +216,7 @@ export class AppComponent {
 
   public post(msg: string) {
     this.messages.push(msg);
-    this.command = "";
-    this.scrollToBottom();
+    this.scrollToBottom(); // not working
   }
   
   randomInteger(min: number, max: number) {
