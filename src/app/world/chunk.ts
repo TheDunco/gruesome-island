@@ -4,7 +4,7 @@ import { Item } from "../item/item";
 
 export class Chunk {
     
-    private occupyingPlayers: Player[];
+    private occupyingPlayers: Player[] = [];
     private items: Item[] = [];
     biome: BiomeName;
     

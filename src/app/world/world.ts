@@ -143,7 +143,6 @@ export class World {
         let index = 0;
         for(let play of this.players) {
             if (this.players[index].name == play.name) {
-                console.log(this.players[index].name == play.name, this.players[index].alive == play.alive)
                 return index;
             } else {
                 index++;

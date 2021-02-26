@@ -10,7 +10,7 @@ export class Player {
     alive: boolean = true;
     kills: number = 0;
     carryingCapacity = 10;
-    currentWeight = 10;
+    currentWeight = 0;
     itemCapacity = 5;
     
     // set by spawning in the world.
@@ -32,6 +32,7 @@ export class Player {
                     }
                 }
                 this.items.push(it);
+                this.currentWeight += it.weight;
                 message = "Item added successfully";
             } else { 
                 message = "Cannot pick up item: You're carrying too much weight!"

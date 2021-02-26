@@ -30,7 +30,7 @@ Gamemode ideas:
 })
 export class AppComponent {
   title = 'gruesome-island';
-  debug = false;
+  debug = true;
   
   constructor() {
     this.username = localStorage.getItem("username");
@@ -75,10 +75,9 @@ export class AppComponent {
     
     // batch/block mode
     if (command[0] == "$") {
-      args.forEach((arg) => {
-        console.log(arg);
-        this.runCommand(arg);
-      });
+      for (let i = 0; i < args.length; i++) {
+        this.runCommand(args[i]);
+      }
     }
     
     switch (command.split(' ')[0]) {  
@@ -141,7 +140,15 @@ export class AppComponent {
       case "p":
       case "pickup":
         this.post(this.player.addItem(this.world.getChunkItem(args[0], this.player)));
+        this.post(`Current weight: ${this.player.currentWeight}`)
         break;
+        
+      case "inventory":
+      case "items":
+        this.post(`Current weight: ${this.player.currentWeight}`)
+        this.player.items.forEach((item) => {
+          this.post(`${item.name} (${item.weight}): ${item.type}\n`); // add/format more item stuff. Not working?!
+        })
       
       default:
         if (command[0] != "$") {
