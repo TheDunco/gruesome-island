@@ -5,20 +5,23 @@
     <hr>
     <h2>Enter your username to begin</h2>
     
-    <mat-form-field>
-      <mat-label>Username</mat-label> 
-      <input matInput [(ngModel)]="username" appearance="filled" (keyup.enter)="usernameEntered()">
+    <mat-form-field class="usernameWrapper">
+      <mat-label class="username" >Username</mat-label> 
+      <input matInput [disabled]="usernameDisabled" [(ngModel)]="username" appearance="filled" (keyup.enter)="usernameEntered()">
     </mat-form-field>
     
     <div *ngIf="mainBoxShown">
       <p *ngFor="let msg of messages">
-        {{msg}}
+        <label class="messages">{{msg}}</label>
       </p>
       <mat-form-field>
-        <mat-label>Command</mat-label>
-        <input matInput [(ngModel)]="command" appearance="filled" (keyup.enter)="runCommand()">
+        <mat-label class="command">Command</mat-label>
+        <input matInput autocomplete="off" [(ngModel)]="command" appearance="filled" (keyup.enter)="runCommand()">
       </mat-form-field>
     </div>
+    
+    <div class="bottomPad">
+      <hr>
+    </div>
   </div>
-  
 </div>

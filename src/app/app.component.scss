@@ -5,21 +5,33 @@
 }
 
 h1 {
-    color: whitesmoke;
+    color: cornsilk;
 }
 
 h2 {
-    color: whitesmoke;
+    color: cornsilk;
 }
 
 mat-label {
-    color: whitesmoke;
+    color: cornsilk;
 }
 
 mat-form-field {
     width: 100%;
 }
 
-p {
-    color: whitesmoke;
+.bottomPad {
+    padding-top: 100px;
+}
+
+.command {
+    color:cornsilk;
+}
+
+.username {
+    color:black;
+}
+
+.messages {
+    color: cornsilk;
 }
