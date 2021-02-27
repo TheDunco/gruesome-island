@@ -21,6 +21,15 @@ export class Player {
         this.name = uname;
     }
     
+    // TODO: implement verbose.
+    showInventory(verbose: boolean): string {
+        let retstring = "";
+        this.items.forEach((item) => {
+            retstring += (`${item.name} (${item.weight}): ${item.type}\n`);
+        });
+        return retstring;
+    }
+    
     addItem(it: Item): string {
         let message: string;
         if (this.items.length < this.itemCapacity) {

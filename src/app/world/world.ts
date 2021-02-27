@@ -101,37 +101,42 @@ export class World {
             retstring += "\t";
             // North/Up
             if (posI - 1 >= 0) {
-                retstring += this.chunks[posI - 1][posJ].biome;
-            } else {
-                retstring += "World border";
+                retstring += this.chunks[posI - 1][posJ].biome + "(";
+                retstring += this.chunks[posI - 1][posJ].getNumItems() + ")";
+            } else { 
+                retstring += "Worldborder";
             }
             retstring += "\n";
             
             // East/Left
             if (posJ - 1 >= 0) {
-                retstring += this.chunks[posI][posJ - 1].biome;
+                retstring += this.chunks[posI][posJ - 1].biome + "(";
+                retstring += this.chunks[posI][posJ - 1].getNumItems() + ")";
             } else {
-                retstring += "World border";
+                retstring += "Worldborder";
             }
             
             retstring += " ";
-            retstring += this.chunks[posI][posJ].biome;
+            retstring += this.chunks[posI][posJ].biome + "(";
+            retstring += this.chunks[posI][posJ].getNumItems() + ")";
             retstring += " ";
             
             // West/Right
             if (posJ + 1 < this.size) {
-                retstring += this.chunks[posI][posJ + 1].biome;
+                retstring += this.chunks[posI][posJ + 1].biome + "(";
+                retstring += this.chunks[posI][posJ + 1].getNumItems()+ ")";
             } else {
-                retstring += "World border";
+                retstring += "Worldborder";
             }
             retstring += "\n";
             retstring += "\t";
 
             // South/Down
             if (posI + 1 < this.size) {
-                retstring += this.chunks[posI + 1][posJ].biome;
+                retstring += this.chunks[posI + 1][posJ].biome + "(";
+                retstring += this.chunks[posI + 1][posJ].getNumItems() + ")";
             } else {
-                retstring += "World border";
+                retstring += "Worldborder";
             }
             retstring += "\n";
         }

@@ -30,7 +30,7 @@ Gamemode ideas:
 })
 export class AppComponent {
   title = 'gruesome-island';
-  debug = true;
+  debug = false;
   
   constructor() {
     this.username = localStorage.getItem("username");
@@ -146,10 +146,13 @@ export class AppComponent {
       case "inventory":
       case "items":
         this.post(`Current weight: ${this.player.currentWeight}`)
-        this.player.items.forEach((item) => {
-          this.post(`${item.name} (${item.weight}): ${item.type}\n`); // add/format more item stuff. Not working?!
-        })
-      
+        if (args[0] == "v") {
+          this.post(this.player.showInventory(true));
+        } else {
+          this.post(this.player.showInventory(false))
+        }
+        break;
+        
       default:
         if (command[0] != "$") {
           this.post(`"${command}" not recognized as a command`);

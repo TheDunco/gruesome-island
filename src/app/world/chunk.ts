@@ -30,6 +30,10 @@ export class Chunk {
         return this.items;
     }
     
+    getNumItems(): number {
+        return this.items.length;
+    }
+    
     addPlayer(aplayer: Player) {
         this.occupyingPlayers.push(aplayer);
     }
