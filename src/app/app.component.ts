@@ -59,7 +59,9 @@ export class AppComponent {
     {name: "down/south", description: "Move your player down."},
     {name: "left/west", description: "Move your player left."},
     {name: "right/east", description: "Move your player right."},
-    {name: "l/look", description: "Get a look at the surrounding chunks"},
+    {name: "l/look", description: "Get a look at the surrounding chunks."},
+    {name: "pickup {itemname}", description: "Pick up an item with the specified name."},
+    {name: "items/inventory {v for verbose}", description: "Show your inventory."}
   ]
   
   usernameEntered() {
