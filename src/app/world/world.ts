@@ -1,7 +1,7 @@
 import { Player } from "../player/player";
 import { Chunk } from "./chunk";
 import { v4 as uuidv4 } from 'uuid';
-import { Item } from "../item/item";
+import { Item, ItemType } from "../item/item";
 
 export class World {
     players: Player[];
@@ -34,13 +34,71 @@ export class World {
                 else if (biomeNum > 90 && biomeNum <= 100) {
                     biome = "City";
                 }
+                // Create the chunk with determined biome name
                 this.chunks[i][j] = new Chunk(biome);
                 
-                if (biomeNum < 10) {
-                    this.chunks[i][j].addItem(new Item(uuidv4(), "Testitem", "Dummy", 1, 1));
+                // Populate chunk with items
+                let itemNum = this.randomInteger(0, 100);
+                if (itemNum <= 25 && biome != "Lake") {
+                    this.chunks[i][j].addItem(this.pistol());
                 }
+                if (itemNum <= 10 && biome == "City") {
+                    this.chunks[i][j].addItem(this.sniper());
+                } else
+                if (itemNum <= 2) {
+                    this.chunks[i][j].addItem(this.fullHeal());
+                } else
+                if (itemNum > 90 && itemNum < 100) {
+                    this.chunks[i][j].addItem(this.caffeine());
+                }
+                
             }
         }
+    }
+    
+    // items
+    // numbers go uses, weight, range, accuracy, damage
+    pistol(): Item {
+        return new Item(uuidv4(), "pistol", "Ranged Weapon", 5, 1, 2, 75, 30, "Simple, common, trusty pistol")
+    }
+    sniper(): Item {
+        return new Item(uuidv4(), "sniper", "Ranged Weapon", 3, 4, 5, 90, 85, "Long range, powerful rifle. Detect and shoot players at long range")
+    }
+    fullHeal(): Item {
+        return new Item(uuidv4(), "fullheal", "Heal", 1, 2, 0, 100, -100, "Heal fully")
+    }
+    caffeine(): Item {
+        return new Item(uuidv4(), "caffeine", "Buff", 1, 1, 0, 100, 0, "Increase speed/action economy based on game mode")
+    }
+    
+    isItemInChunk(player: Player, itemName: string): boolean {
+        let playerIndex = this.specificPlayer(player);
+        let posI = this.players[playerIndex].posI;
+        let posJ = this.players[playerIndex].posJ;
+        let allChunkItems = this.chunks[posI][posJ].getItems();
+        for (let index = 0; index < allChunkItems.length; index++) {
+            if (allChunkItems[index].name == itemName) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    removeItemFromChunk(player: Player, itemName: string) {
+        let playerIndex = this.specificPlayer(player);
+        let posI = this.players[playerIndex].posI;
+        let posJ = this.players[playerIndex].posJ;
+        console.log("Full list", this.chunks[posI][posJ].getItems())
+        
+        let allChunkItems = this.chunks[posI][posJ].getItems();
+        for (let index = 0; index <= allChunkItems.length; index++) {
+            if (allChunkItems[index].name == itemName) {
+                console.log("Removed", index, itemName, allChunkItems[index].name)
+                this.chunks[posI][posJ].removeItem(allChunkItems[index]);
+                return;
+            }
+        }
+        console.log("Did not remove", this.chunks[posI][posJ].getItems())
     }
     
     refreshPlayer(player: Player) {
@@ -65,8 +123,6 @@ export class World {
         for (let index = 0; index < allChunkItems.length; index++) {
             if (allChunkItems[index].name == name) {
                 return allChunkItems[index];
-            } else {
-                index++;
             }
         }
         
@@ -81,9 +137,9 @@ export class World {
             let posI = this.players[playerIndex].posI;
             let posJ = this.players[playerIndex].posJ;
             let items = this.chunks[posI][posJ].getItems();
-            
             items.forEach((item) => {
-                retstring += item.name + " ";
+                console.log(item.name, item.id);
+                retstring += item.name + " | ";
             })
         }
         return retstring;
@@ -100,18 +156,18 @@ export class World {
             
             retstring += "\t";
             // North/Up
-            if (posI - 1 >= 0) {
-                retstring += this.chunks[posI - 1][posJ].biome + "(";
-                retstring += this.chunks[posI - 1][posJ].getNumItems() + ")";
+            if (posI - player.currentViewDistance >= 0) {
+                retstring += this.chunks[posI - player.currentViewDistance][posJ].biome + "(";
+                retstring += this.chunks[posI - player.currentViewDistance][posJ].getNumItems() + ")";
             } else { 
                 retstring += "Worldborder";
             }
             retstring += "\n";
             
             // East/Left
-            if (posJ - 1 >= 0) {
-                retstring += this.chunks[posI][posJ - 1].biome + "(";
-                retstring += this.chunks[posI][posJ - 1].getNumItems() + ")";
+            if (posJ - player.currentViewDistance >= 0) {
+                retstring += this.chunks[posI][posJ - player.currentViewDistance].biome + "(";
+                retstring += this.chunks[posI][posJ - player.currentViewDistance].getNumItems() + ")";
             } else {
                 retstring += "Worldborder";
             }
@@ -122,9 +178,9 @@ export class World {
             retstring += " ";
             
             // West/Right
-            if (posJ + 1 < this.size) {
-                retstring += this.chunks[posI][posJ + 1].biome + "(";
-                retstring += this.chunks[posI][posJ + 1].getNumItems()+ ")";
+            if (posJ + player.currentViewDistance < this.size) {
+                retstring += this.chunks[posI][posJ + player.currentViewDistance].biome + "(";
+                retstring += this.chunks[posI][posJ + player.currentViewDistance].getNumItems()+ ")";
             } else {
                 retstring += "Worldborder";
             }
@@ -132,9 +188,9 @@ export class World {
             retstring += "\t";
 
             // South/Down
-            if (posI + 1 < this.size) {
-                retstring += this.chunks[posI + 1][posJ].biome + "(";
-                retstring += this.chunks[posI + 1][posJ].getNumItems() + ")";
+            if (posI + player.currentViewDistance < this.size) {
+                retstring += this.chunks[posI + player.currentViewDistance][posJ].biome + "(";
+                retstring += this.chunks[posI + player.currentViewDistance][posJ].getNumItems() + ")";
             } else {
                 retstring += "Worldborder";
             }
@@ -166,7 +222,7 @@ export class World {
                         retstring += " ";
                     }
                     else {
-                        retstring += this.chunks[i][j].biome;
+                        retstring += this.chunks[i][j].biome + "(" + this.chunks[i][j].getNumItems() + ")";
                         retstring += " ";
                     }
                 });

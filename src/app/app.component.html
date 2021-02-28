@@ -16,7 +16,7 @@
       </pre>
       <mat-form-field>
         <mat-label class="command">Command</mat-label>
-        <input matInput autocomplete="off" [(ngModel)]="command" appearance="filled" (keyup.enter)="runCommand()">
+        <input matInput [disabled]="commandDisabled" autocomplete="off" [(ngModel)]="command" appearance="filled" (keyup.enter)="runCommand()">
       </mat-form-field>
     </div>
     

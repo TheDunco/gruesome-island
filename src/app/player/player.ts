@@ -12,6 +12,7 @@ export class Player {
     carryingCapacity = 10;
     currentWeight = 0;
     itemCapacity = 5;
+    currentViewDistance = 1;
     
     // set by spawning in the world.
     posI: number;
@@ -24,9 +25,19 @@ export class Player {
     // TODO: implement verbose.
     showInventory(verbose: boolean): string {
         let retstring = "";
-        this.items.forEach((item) => {
-            retstring += (`${item.name} (${item.weight}): ${item.type}\n`);
-        });
+        if (verbose) {
+            this.items.forEach((item) => {
+                retstring += (`${item.name} (${item.weight}) [${item.usesRemaining}]: 
+                \n\t{${item.type}} ${item.description}.
+                \n\tDamage: ${item.damage}
+                \n\tAccuracy: ${item.accuracy}
+                \n\tRange: ${item.range}\n---\n`);
+            });
+        } else if (!verbose) {
+            this.items.forEach((item) => {
+                retstring += (`${item.name}, `);
+            });
+        }
         return retstring;
     }
     
@@ -36,7 +47,7 @@ export class Player {
             if (this.currentWeight + it.weight <= this.carryingCapacity) {
                 for (let i = 0; i < this.items.length; i++) {
                     if (this.items[i].name == it.name || this.items[i].id == it.id) {
-                        message = "Cannot pick up item: You already have this item";
+                        throw "Cannot pick up item: You already have this item";
                         return message;
                     }
                 }
@@ -44,10 +55,10 @@ export class Player {
                 this.currentWeight += it.weight;
                 message = "Item added successfully";
             } else { 
-                message = "Cannot pick up item: You're carrying too much weight!"
+                throw "Cannot pick up item: You're carrying too much weight!"
             }
         } else {
-            message = "Cannot pick up item: You're carrying too many items!"
+            throw "Cannot pick up item: You're carrying too many items!"
         }
         return message;
     }

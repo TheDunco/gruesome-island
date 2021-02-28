@@ -1,6 +1,7 @@
 import { ThrowStmt } from '@angular/compiler';
 import { Component, ɵCompiler_compileModuleSync__POST_R3__ } from '@angular/core';
 import { Console } from 'console';
+import { posix } from 'path';
 import { BrowserStack } from 'protractor/built/driverProviders';
 import { Player } from 'src/app/player/player';
 import { World } from 'src/app/world/world';
@@ -29,7 +30,7 @@ Gamemode ideas:
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'gruesome-island';
+  title = 'Gruesome Island';
   debug = false;
   
   constructor() {
@@ -37,6 +38,10 @@ export class AppComponent {
     if (this.username != "") {
       this.mainBoxShown = true;
       this.player = new Player(this.username);
+      this.commandDisabled = false;
+    }
+    else {
+      this.commandDisabled = true;
     }
     this.usernameDisabled = false;
   }
@@ -45,6 +50,7 @@ export class AppComponent {
   
   username: string;
   usernameDisabled: boolean = false;
+  commandDisabled: boolean = true;
   command: string;
   mainBoxShown = false;
   
@@ -60,15 +66,18 @@ export class AppComponent {
     {name: "left/west", description: "Move your player left."},
     {name: "right/east", description: "Move your player right."},
     {name: "l/look", description: "Get a look at the surrounding chunks."},
-    {name: "pickup {itemname}", description: "Pick up an item with the specified name."},
-    {name: "items/inventory {v for verbose}", description: "Show your inventory."}
+    {name: "g/grab/pickup {itemname}", description: "Pick up an item with the specified name."},
+    {name: "items/inv/inventory {v for verbose}", description: "Show your inventory."}
   ]
   
   usernameEntered() {
     // start the game
-    this.player = new Player(this.username);
-    localStorage.setItem("username", this.username);
-    this.mainBoxShown = true;
+    if (this.username != "") {
+      this.player = new Player(this.username);
+      localStorage.setItem("username", this.username);
+      this.mainBoxShown = true;
+      this.commandDisabled = false;
+    }
   }
   
   runCommand(command: string = this.command) {
@@ -109,24 +118,28 @@ export class AppComponent {
       case "up":
       case "north":
         this.moveUp();
+        this.lookAround();
         break;
         
       // move down
       case "down":
       case "south":
         this.moveDown();
+        this.lookAround();
         break;
       
       // move left
       case "left":
       case "west":
         this.moveLeft();
+        this.lookAround();
         break;
       
       // move right
       case "right":
       case "east":
         this.moveRight();
+        this.lookAround();
         break;
         
       case "l":
@@ -139,20 +152,25 @@ export class AppComponent {
         this.post(this.world.inspectChunk(this.player));
         break;
         
-      case "p":
+      case "g":
+      case "grab":
       case "pickup":
-        this.post(this.player.addItem(this.world.getChunkItem(args[0], this.player)));
-        this.post(`Current weight: ${this.player.currentWeight}`)
+        this.pickup(args);
+        
         break;
         
-      case "inventory":
+      case "inv":
       case "items":
-        this.post(`Current weight: ${this.player.currentWeight}`)
+      case "inventory":
+        this.post("-------------Inventory---------------");
+        this.post(`Current weight: ${this.player.currentWeight}`);
         if (args[0] == "v") {
           this.post(this.player.showInventory(true));
         } else {
           this.post(this.player.showInventory(false))
         }
+        this.post("--------------------------------------");
+
         break;
         
       default:
@@ -163,6 +181,26 @@ export class AppComponent {
     }
   }
   
+  private pickup(args: string[]) {
+    if (this.world.isItemInChunk(this.player, args[0])) {
+      try {
+        this.post(this.player.addItem(this.world.getChunkItem(args[0], this.player)));
+      } 
+      catch (e) {
+        this.post(e);
+        return;
+      }
+      
+      this.world.removeItemFromChunk(this.player, args[0]);
+      this.post(`Current weight: ${this.player.currentWeight}`);
+      if (args[0] == "Sniper") {
+        this.player.currentViewDistance = 5;
+      }
+    } else {
+      this.post("Invalid item name: That item isn't in the current chunk");
+    }
+  }
+
   private lookAround() {
     let surroundings = this.world.lookAround(this.player).split("\n");
     surroundings.forEach((str) => this.post(str));
@@ -240,7 +278,7 @@ export class AppComponent {
   private displayHelpMessage() {
     this.post("----------Available Commands----------");
     this.COMMANDS.forEach((com) => this.post(`${com.name}: ${com.description}`));
-    this.post("-------------------------------------------------------");
+    this.post("--------------------------------------");
   }
 
   public post(msg: string) {
