@@ -1,27 +1,33 @@
 # GruesomeIsland
+This is a web version of the 2020 CalvinHacks project started by myself, Andrew Baker, Advait Scaria, and Josh Ridder.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.2.2.
+## What is Gruesome Island?
+Gruesome Island is Andrew Baker's brainchild: a text based battle royale! Discover the world, pickup and use items, and outsmart your opponents to win!
 
-## Development server
+Of course, that's the goal.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Started for the 2020 CalvinHacks, the original implementation of the game was made in 24 hours by 4 people. We ran into some major problems with the ways we were doing things, and having 4 people working at the same time on the same project was a bit of a nightmare. So, I got the inspiration the other day to re-create the idea in a web app! I figured it woudl make it more accessable and infinitely easier to do multiplayer games. After taking CS336 Web Development in Fall of 2020, I felt super confident about doing this in Angular, and it's turning out to be much easier.
 
-## Code scaffolding
+## Play!
+The current implementation is a work in progress, but to see my progress, check it out here:
+https://gruesome-island-angular.web.app/
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Ideas
+I've had a couple ideas for different game modes.
+1. Blitz
+  - typing speed/player speed based
+  - no time or turn limitations: take actions as fast as you can
+  
+2. Turn/Move based (default)
+  - no time limit per turn
+  - Each player gets 3-5 (items like caffeine can increase this) moves per turn (different commands count as a differnt number of "moves")
 
-## Build
+3. Batch Blast
+  - time limit to write command (probably ~10-20s)
+  - Each player can only run 1 command per turn
+  - One batch command ($) only counts as 1 command which makes stringing together commands critical and makes efficiency important
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## Devs
+This is an Angular 8 application that's currently deployed on Google's Firebase.
+If you fork/clone the project, you might have to run `npm install` or `ng install` to get things set up.
+After that, run `ng serve` to run the dev server.
